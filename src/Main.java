@@ -8,29 +8,19 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         StringBuilder wholeText = new StringBuilder();
         HashMap<String, Integer> variables = new HashMap<>();
-
+         PythonInterpreter interpreter = new PythonInterpreter();
         System.out.println("Enter text (press Ctrl+D or Ctrl+Z to finish):");
         while (scanner.hasNextLine()) {
             wholeText.append(scanner.nextLine()).append("\n");
         }
-
         String[] splittedCode = wholeText.toString().split("\n");
 
 
-        for (int i = 0; i < splittedCode.length; i++) {
-            String line = splittedCode[i].trim();
-
-            if (line.contains("=")) {
-                String[] assignment = line.split("=", 2);
-                String variableName = assignment[0].trim();
-                String expression = assignment[1].trim();
-
-                variables.put(variableName, Integer.parseInt(expression));
-            }
-
-
-
+        for (String s : splittedCode) {
+            String line = s.trim();
+            interpreter.handleVariableAssignment(variables, line);
         }
-        System.out.println(variables);
+
+            System.out.println(variables);
     }
 }
