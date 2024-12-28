@@ -22,6 +22,6 @@ public class Main {
             interpreter.handlePrint(variables,line);
         }
 
-            System.out.println(variables);
+            System.out.println(new PythonAlgorithms().findSum());
     }
 }
