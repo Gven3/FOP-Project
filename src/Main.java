@@ -19,6 +19,7 @@ public class Main {
         for (String s : splittedCode) {
             String line = s.trim();
             interpreter.handleVariableAssignment(variables, line);
+            interpreter.handlePrint(variables,line);
         }
 
             System.out.println(variables);
