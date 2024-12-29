@@ -2,8 +2,8 @@ import java.util.HashMap;
 import java.util.Stack;
 
 public class PythonInterpreter {
+    private static boolean conditionMet = false;
     public void handleVariableAssignment(HashMap<String, Integer> variables, String line) {
-
         if (line.contains("=")) {
             String[] parts = line.split("=", 2);
             String variableName = parts[0].trim();
@@ -115,4 +115,84 @@ public class PythonInterpreter {
         if (operator == '*' || operator == '/') return 2;
         return 0;
     }
+
+    public void handleIfElse(HashMap<String, Integer> variables, String[] lines, int startLine) {
+        int endLine = lines.length;
+
+
+        for (int i = startLine; i < lines.length; i++) {
+            if (!lines[i].startsWith(" ") && i > startLine) {
+                endLine = i;
+                break;
+            }
+        }
+
+        for (int i = startLine; i < endLine; i++) {
+            String currentLine = lines[i].trim();
+
+
+            if ((currentLine.startsWith("if ") || currentLine.startsWith("elif ")) && currentLine.endsWith(":")) {
+                String condition = currentLine.substring(currentLine.indexOf(" ") + 1, currentLine.length() - 1).trim();
+
+                if (!conditionMet && evaluateCondition(variables, condition)) {
+                    conditionMet = true;
+
+
+                    for (int j = i + 1; j < endLine && lines[j].startsWith("    "); j++) {
+                        executeLine(variables, lines[j].trim());
+                        i = j;
+                    }
+                }
+            }
+            if (currentLine.startsWith("else:") && !conditionMet) {
+                for (int j = i + 1; j < endLine && lines[j].startsWith("    "); j++) {
+                    executeLine(variables, lines[j].trim());
+                }
+                break;
+            }
+        }
+
+    }
+
+    private void executeLine(HashMap<String, Integer> variables, String line) {
+        if (line.contains("=")) {
+            handleVariableAssignment(variables, line);
+        } else if (line.startsWith("print")) {
+            handlePrint(variables, line);
+        }
+    }
+
+    private boolean evaluateCondition(HashMap<String, Integer> variables, String condition) {
+        String[] parts = condition.split(" ");
+        if (parts.length != 3) {
+            System.out.println("Error: Invalid condition syntax");
+            return false;
+        }
+
+        String leftOperand = parts[0];
+        String operator = parts[1];
+        String rightOperand = parts[2];
+
+        int leftValue = variables.containsKey(leftOperand) ? variables.get(leftOperand) : Integer.parseInt(leftOperand);
+        int rightValue = variables.containsKey(rightOperand) ? variables.get(rightOperand) : Integer.parseInt(rightOperand);
+
+        switch (operator) {
+            case "<":
+                return leftValue < rightValue;
+            case "<=":
+                return leftValue <= rightValue;
+            case ">":
+                return leftValue > rightValue;
+            case ">=":
+                return leftValue >= rightValue;
+            case "==":
+                return leftValue == rightValue;
+            case "!=":
+                return leftValue != rightValue;
+            default:
+                System.out.println("Error: Invalid operator");
+                return false;
+        }
+    }
+
 }
