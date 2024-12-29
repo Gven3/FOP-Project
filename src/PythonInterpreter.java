@@ -117,7 +117,7 @@ public class PythonInterpreter {
 
 
         for (int i = startLine; i < lines.length; i++) {
-            if (!lines[i].startsWith(" ") && i > startLine) {
+            if (!lines[i].startsWith("\t") && i > startLine) {
                 endLine = i;
                 break;
             }
@@ -129,19 +129,20 @@ public class PythonInterpreter {
 
             if ((currentLine.startsWith("if ") || currentLine.startsWith("elif ")) && currentLine.endsWith(":")) {
                 String condition = currentLine.substring(currentLine.indexOf(" ") + 1, currentLine.length() - 1).trim();
-
                 if (!conditionMet && evaluateCondition(variables, condition)) {
                     conditionMet = true;
 
 
-                    for (int j = i + 1; j < endLine && lines[j].startsWith("    "); j++) {
+
+                    for (int j = i + 1; j <= endLine && lines[j].startsWith("\t"); j++) {
+
                         executeLine(variables, lines[j].trim());
                         i = j;
                     }
                 }
             }
             if (currentLine.startsWith("else:") && !conditionMet) {
-                for (int j = i + 1; j < endLine && lines[j].startsWith("    "); j++) {
+                for (int j = i + 1; j <= endLine && lines[j].startsWith("\t"); j++) {
                     executeLine(variables, lines[j].trim());
                 }
                 break;
