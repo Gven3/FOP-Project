@@ -45,7 +45,7 @@ public class PythonAlgorithms {
              "    while i * i <= " + n + ":\n" +
              "        if " + n + " % i == 0:\n" +
              "            return False\n" +
-             "        i += 1\n" +
+             "        i = i + 1\n" +
              "    \n" +
              "    return True\n";
     }
