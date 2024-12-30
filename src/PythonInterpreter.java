@@ -34,6 +34,30 @@ public class PythonInterpreter {
             }
         }
     }
+    public void handleWhile(HashMap<String, Integer> variables, String[] lines, int startLine) {
+        int endLine = startLine;
+
+        // Find the end of the while block
+        for (int i = startLine + 1; i < lines.length; i++) {
+            if (!lines[i].startsWith("\t")) {
+                endLine = i;
+                break;
+            }
+        }
+
+        String condition = lines[startLine].substring(6, lines[startLine].length() - 1).trim(); // Extract condition
+        boolean conditionHolds = evaluateCondition(variables, condition);
+        while (conditionHolds) {
+            for (int i = startLine + 1; i <= endLine && lines[i].startsWith("\t"); i++) {
+                String line = lines[i].trim();
+                if (line.isEmpty()) continue;
+                executeLine(variables, line);
+            }
+            // Reevaluate condition after the loop body
+            conditionHolds = evaluateCondition(variables, condition);
+        }
+    }
+
 
     public Integer handleArithmeticOperations(HashMap<String, Integer> variables, String expression) {
         try {
