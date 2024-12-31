@@ -92,7 +92,7 @@ public class PythonInterpreter {
                 continue;
             }
 
-            if (ch == '+' || ch == '-' || ch == '*' || ch == '/') {
+            if (ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '%') {
                 while (!operators.isEmpty() && precedence(operators.peek()) >= precedence(ch)) {
                     compute(operands, operators);
                 }
@@ -127,12 +127,15 @@ public class PythonInterpreter {
             case '/':
                 operands.push(a / b);
                 break;
+            case '%':
+                operands.push(a % b);
+                break;
         }
     }
 
     private int precedence(char operator) {
         if (operator == '+' || operator == '-') return 1;
-        if (operator == '*' || operator == '/') return 2;
+        if (operator == '*' || operator == '/' || operator == '%') return 2;
         return 0;
     }
 
