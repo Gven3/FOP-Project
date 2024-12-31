@@ -22,10 +22,15 @@ public class Main {
             if (line.isEmpty()) {
                 continue;
             }
-
-            if (line.startsWith("if ") || line.startsWith("elif ") || line.startsWith("else:")) {
-                interpreter.handleIfElse(variables, splittedCode, i);
+            
+            if (line.startsWith("while ")) {
+                interpreter.handleWhile(variables, splittedCode, i);
                 // Skip over the block of code that was handled
+                while (i + 1 < splittedCode.length && splittedCode[i + 1].startsWith("\t")) {
+                    i++;
+                }
+            } else if (line.startsWith("if ") || line.startsWith("elif ") || line.startsWith("else:")) {
+                interpreter.handleIfElse(variables, splittedCode, i);
                 while (i + 1 < splittedCode.length && splittedCode[i + 1].startsWith("\t")) {
                     i++;
                 }
@@ -33,10 +38,9 @@ public class Main {
                 interpreter.handleVariableAssignment(variables, line);
                 interpreter.handlePrint(variables, line);
             }
+
         }
 
-
         System.out.println("Final Variables: " + variables);
-
     }
 }
