@@ -100,7 +100,6 @@ public class PythonInterpreter {
 
             // Handle the "else" block when the conditionElse flag is true and no previous condition was met
             if (conditionElse && !conditionMet && !lines[i].startsWith("\tif ")) {
-                System.out.println("oops");
                 executeBlock(variables, lines, i, endLine); // Execute the block of code for the "else" condition
                 break;
             }
