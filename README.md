@@ -5,7 +5,7 @@ Our program takes input (Python code), interprets it to Java and returns desired
 Giorgi Gvenetadze,
 Nikoloz Ubilava,
 Davit Vacheishvili,
-Nikoloz Pakhuridze.
+Nodar Pakhuridze.
 
 # Instruction
 After opening a project there is list of algorithms (you can change inputs for each algorithms, for example: fib(7), fib(8)...), and then you put 
