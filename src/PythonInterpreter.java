@@ -24,18 +24,31 @@ public class PythonInterpreter {
     }
 
     public void handlePrint(HashMap<String, Integer> variables, String line, boolean isInLoop) {
+        // Check if the line is a valid print statement with the format print(...)
         if (line.startsWith("print(") && line.endsWith(")")) {
+            // Extract the content inside the parentheses
             String content = line.substring(line.indexOf("(") + 1, line.lastIndexOf(")")).trim();
 
+            // Check if the content is a string literal (enclosed in double quotes)
             if (content.startsWith("\"") && content.endsWith("\"")) {
+                // Print the string content after removing the enclosing double quotes
                 System.out.println(content.substring(1, content.length() - 1));
-                if(!isInLoop) System.exit(0);
+
+                // Exit the program if not inside a loop
+                if (!isInLoop) System.exit(0);
             } else {
+                // Handle cases where the content is an arithmetic expression or variable
                 try {
+                    // Evaluate the arithmetic expression or retrieve the value of the variable
                     int value = handleArithmeticOperations(variables, content);
+
+                    // Print the evaluated value
                     System.out.println(value);
-                    if(!isInLoop) System.exit(0);
+
+                    // Exit the program if not inside a loop
+                    if (!isInLoop) System.exit(0);
                 } catch (Exception e) {
+                    // Handle errors such as invalid expressions or undefined variables
                     System.out.println("Error: Invalid arithmetic expression or undefined variable in print statement");
                 }
             }
@@ -66,7 +79,7 @@ public class PythonInterpreter {
                         }
                     }
                     // If there is no if, execute line
-                    executeLine(variables, line,true);
+                    executeLine(variables, line, true);
                 }
             }
         }
@@ -85,10 +98,10 @@ public class PythonInterpreter {
                 executeBlock(variables, lines, i, endLine);
                 break;
             }
-            if(lines[i].startsWith("\tif ")){
-                int last = findBlockEnd(lines,i);
+            if (lines[i].startsWith("\tif ")) {
+                int last = findBlockEnd(lines, i);
                 String conditional = lines[i].substring(lines[i].indexOf(" ") + 1, lines[i].length() - 1).trim();
-                handleIfElse(variables, Main.formatTabs(lines,i, last-1), conditional, false);
+                handleIfElse(variables, Main.formatTabs(lines, i, last - 1), conditional, false);
                 while (i + 1 < lines.length && lines[i + 1].startsWith("\t")) {
                     i++;
                 }
@@ -112,15 +125,15 @@ public class PythonInterpreter {
 
     private void executeBlock(HashMap<String, Integer> variables, String[] lines, int start, int end) {
         for (int i = start; i < end && lines[i].startsWith("\t"); i++) {
-            executeLine(variables, lines[i].trim(),false);
+            executeLine(variables, lines[i].trim(), false);
         }
     }
 
-    private void executeLine(HashMap<String, Integer> variables, String line,boolean isInLoop) {
+    private void executeLine(HashMap<String, Integer> variables, String line, boolean isInLoop) {
         if (line.contains("=")) {
             handleVariableAssignment(variables, line);
         } else if (line.startsWith("print")) {
-            handlePrint(variables, line,isInLoop);
+            handlePrint(variables, line, isInLoop);
         }
     }
 
@@ -230,30 +243,43 @@ public class PythonInterpreter {
     }
 
     private void compute(Stack<Integer> operands, Stack<Character> operators) {
-        int b = operands.pop();
-        int a = operands.pop();
+        // Pop the top two operands from the operands stack
+        int b = operands.pop(); // Second operand (right-hand side)
+        int a = operands.pop(); // First operand (left-hand side)
+
+        // Pop the operator from the operators stack
         char op = operators.pop();
 
+        // Perform the operation based on the operator and push the result back to the operands stack
         switch (op) {
             case '+':
-                operands.push(a + b);
+                operands.push(a + b); // Addition
                 break;
             case '-':
-                operands.push(a - b);
+                operands.push(a - b); // Subtraction
                 break;
             case '*':
-                operands.push(a * b);
+                operands.push(a * b); // Multiplication
                 break;
             case '/':
-                operands.push(a / b);
+                // Handle division, ensuring no division by zero occurs
+                if (b == 0) {
+                    throw new ArithmeticException("Error: Division by zero");
+                }
+                operands.push(a / b); // Division
                 break;
             case '%':
+                // Handle modulus operation
                 operands.push(a % b);
                 break;
+            default:
+                throw new IllegalArgumentException("Error: Unsupported operator - " + op);
         }
     }
 
     private int precedence(char operator) {
+        // Return the precedence level of the operator
+        // Operators '+' and '-' have lower precedence (1), while '*' and '/' have higher precedence (2)
         return (operator == '+' || operator == '-') ? 1 : 2;
     }
 }
