@@ -66,7 +66,7 @@ public class PythonAlgorithms {
                 "\tn = n / 10\n" +
                 "if original_n == reversed_n:\n" +
                 "\tprint(\"true\")\n" +
-                "else:\n" +
+                "else: \n" +
                 "\tprint(\"false\")"
                 ;
     }

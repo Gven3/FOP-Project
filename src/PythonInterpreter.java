@@ -92,7 +92,7 @@ public class PythonInterpreter {
         // Iterate through each line within the block
         for (int i = 1; i < endLine; i++) {
             // If the condition is not met yet and the current line is not part of a nested if block
-            if (!conditionMet && evaluateCondition(variables, condition) && !conditionElse && !lines[i].startsWith("\tif ")) {
+            if (!conditionElse &&!conditionMet && evaluateCondition(variables, condition)  && !lines[i].startsWith("\tif ")) {
                 conditionMet = true; // Mark that the condition has been met
                 executeBlock(variables, lines, i, endLine); // Execute the block of code for the "if" condition
                 break;
@@ -100,6 +100,7 @@ public class PythonInterpreter {
 
             // Handle the "else" block when the conditionElse flag is true and no previous condition was met
             if (conditionElse && !conditionMet && !lines[i].startsWith("\tif ")) {
+                System.out.println("oops");
                 executeBlock(variables, lines, i, endLine); // Execute the block of code for the "else" condition
                 break;
             }
@@ -157,7 +158,6 @@ public class PythonInterpreter {
         // List of valid comparison operators
         String[] operators = {">=", "<=", ">", "<", "==", "!="};
         String operator = null;
-
         // Identify the operator present in the condition
         for (String op : operators) {
             if (condition.contains(op)) {
