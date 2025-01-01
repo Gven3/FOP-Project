@@ -55,7 +55,7 @@ public class PythonInterpreter {
         }
     }
 
-    public void handleWhile(HashMap<String, Integer> variables, String[] lines, int startLine) {
+    public void handleWhile(HashMap<String, Integer> variables, String[] lines) {
         // Find the end of the while block
         int endLine = findBlockEnd(lines, 0);
 
@@ -86,27 +86,43 @@ public class PythonInterpreter {
     }
 
     public void handleIfElse(HashMap<String, Integer> variables, String[] lines, String condition, boolean conditionElse) {
+        // Find the end of the current block of code
         int endLine = findBlockEnd(lines, 0);
 
+        // Iterate through each line within the block
         for (int i = 1; i < endLine; i++) {
+            // If the condition is not met yet and the current line is not part of a nested if block
             if (!conditionMet && evaluateCondition(variables, condition) && !conditionElse && !lines[i].startsWith("\tif ")) {
-                conditionMet = true;
-                executeBlock(variables, lines, i, endLine);
+                conditionMet = true; // Mark that the condition has been met
+                executeBlock(variables, lines, i, endLine); // Execute the block of code for the "if" condition
                 break;
             }
+
+            // Handle the "else" block when the conditionElse flag is true and no previous condition was met
             if (conditionElse && !conditionMet && !lines[i].startsWith("\tif ")) {
-                executeBlock(variables, lines, i, endLine);
+                executeBlock(variables, lines, i, endLine); // Execute the block of code for the "else" condition
                 break;
             }
+
+            // Handle nested "if" blocks
             if (lines[i].startsWith("\tif ")) {
+                // Find the end of the nested "if" block
                 int last = findBlockEnd(lines, i);
+
+                // Extract the condition for the nested "if"
                 String conditional = lines[i].substring(lines[i].indexOf(" ") + 1, lines[i].length() - 1).trim();
+
+                // Recursively handle the nested "if" block
                 handleIfElse(variables, Main.formatTabs(lines, i, last - 1), conditional, false);
+
+                // Skip lines belonging to the nested block to avoid reprocessing
                 while (i + 1 < lines.length && lines[i + 1].startsWith("\t")) {
                     i++;
                 }
             }
         }
+
+        // Reset the conditionMet flag after processing the block
         conditionMet = false;
     }
 
