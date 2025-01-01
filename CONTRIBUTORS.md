@@ -10,7 +10,7 @@ Python algorithms
 While loop handler,
 Some functions which were needed for while loop
 
-# Nikoloz Pakhuridze
+# Nodar Pakhuridze
 Arithmetic operation handler,
 Variable assignment handler
 
