@@ -6,13 +6,16 @@ public class PythonInterpreter {
 
     public void handleVariableAssignment(HashMap<String, Integer> variables, String line) {
         if (line.contains("=")) {
+            // Split on the '=' to determine variable name and expression
             String[] parts = line.split("=", 2);
             String variableName = parts[0].trim();
             String expression = parts[1].trim();
 
 
             try {
+                // If expression needs any arithmetic operation, we call handleArithmeticOperations
                 int value = handleArithmeticOperations(variables, expression);
+                // And put it in HashMap for future use
                 variables.put(variableName, value);
             } catch (Exception e) {
                 System.out.println("Error: Invalid arithmetic expression in line - " + line);
@@ -40,22 +43,29 @@ public class PythonInterpreter {
     }
 
     public void handleWhile(HashMap<String, Integer> variables, String[] lines, int startLine) {
+        // Find the end of the while block
         int endLine = findBlockEnd(lines, 0);
 
+        // Take a condition to check if it is met
         String condition = lines[0].substring(6, lines[0].length() - 1).trim();
+
         while (evaluateCondition(variables, condition)) {
             for (int i = 1; i < endLine; i++) {
                 String line = lines[i].trim();
 
                 if (!line.isEmpty()) {
+                    // Check if there is an if in loop
                     if (lines[i].startsWith("\tif ")) {
+                        // Find the end of if block
                         int last = findBlockEnd(lines, i);
                         String conditional = lines[i].substring(lines[i].indexOf(" ") + 1, lines[i].length() - 1).trim();
                         handleIfElse(variables, Main.formatTabs(lines, i, last - 1), conditional, false);
+                        // Skipping if's block lines
                         while (i + 1 < lines.length && lines[i + 1].startsWith("\t\t")) {
                             i++;
                         }
                     }
+                    // If there is no if, execute line
                     executeLine(variables, line,true);
                 }
             }
@@ -100,9 +110,9 @@ public class PythonInterpreter {
         return endLine;
     }
 
-    private void executeBlock(HashMap<String, Integer> variables, String[] lines, int start, int end,boolean isInLoop) {
+    private void executeBlock(HashMap<String, Integer> variables, String[] lines, int start, int end) {
         for (int i = start; i < end && lines[i].startsWith("\t"); i++) {
-            executeLine(variables, lines[i].trim(),isInLoop);
+            executeLine(variables, lines[i].trim(),false);
         }
     }
 
